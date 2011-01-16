@@ -2,9 +2,15 @@
 
 /**
  * A PHP5 class for invalidating Amazon CloudFront objects via its API.
+ * Fork to use Request2.php instead of Request.php
+ * http://pear.php.net/manual/en/package.http.http-request2.php
+ *
+ * This CloudFront class is just a lightweight wrapper for handling invalidation requests.
+ * If you look for the real thing and need to use the full AWS SDK check out
+ * http://aws.amazon.com/sdkforphp/
  */
 
-require_once 'HTTP/Request.php';  // grab with "pear install --onlyreqdeps HTTP_Request"
+require_once 'HTTP/Request2.php';  // grab with "sudo pear install --onlyreqdeps HTTP_Request2-alpha"
 
 
 class CloudFront {
@@ -50,21 +56,21 @@ class CloudFront {
 		$body .= "<CallerReference>".time()."</CallerReference>";
 		$body .= "</InvalidationBatch>";
 		// make and send request		
-		$req = & new HTTP_Request($requestUrl);
+		$req = new HTTP_Request2($requestUrl);
+		$req->setAdapter('curl');
 		$req->setMethod("POST");
-		$req->addHeader("Date", $date);
-		$req->addHeader("Authorization", $this->makeKey($date));
-		$req->addHeader("Content-Type", "text/xml");
+		$req->setHeader("Date", $date);
+		$req->setHeader("Authorization", $this->makeKey($date));
+		$req->setHeader("Content-Type", "text/xml");
 		$req->setBody($body);
-		$response           = $req->sendRequest();
-		$this->responseCode = $req->getResponseCode();
+		$response           = $req->send();
+		$this->responseCode = $response->getStatus();
 		if ($debug==true){
 			$er = array();
 			array_push($er, "CloudFront: Invalidating Object: $key");
 			array_push($er, $requestUrl);
 			array_push($er, "body: $body");
-			array_push($er, "response: $response");
-			array_push($er, "response string: " . $req->getResponseBody());
+			array_push($er, "response body: " . $response->getBody());
 			array_push($er, "");
 			array_push($er, "response code: " . $this->responseCode);
 			array_push($er, "");
@@ -105,4 +111,3 @@ class CloudFront {
 		return $hmac;
 	}
 }
-?>	
