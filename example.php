@@ -6,7 +6,11 @@
 	$secretKey      = "";
 	$distributionId = "";
 	
-	$key = ""; // String representing the existing CloudFront object to invalidate
+  // String representing the existing CloudFront object to invalidate
+  // See also http://www.subchild.com/2010/09/17/amazon-cloudfront-php-invalidator/
+  	$key = array(
+  	 "/sites/all/themes/blueprint/css/style.css",
+  	 );
 	
 	$cf  = new CloudFront($keyId, $secretKey, $distributionId);
 ?>
