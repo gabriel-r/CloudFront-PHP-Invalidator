@@ -10,8 +10,9 @@
  * http://aws.amazon.com/sdkforphp/
  */
 
-require_once 'HTTP/Request2.php';  // grab with "sudo pear install --onlyreqdeps HTTP_Request2-alpha"
-
+require_once '/usr/share/pear/HTTP/Request2.php';
+// grab with "sudo pear install --onlyreqdeps HTTP_Request2-alpha"
+// see also http://stackoverflow.com/q/4483317/170091
 
 class CloudFront {
 	
